@@ -39,16 +39,16 @@ map_token_to_num = {
         'ㄱ': 43, 'ㄲ': 44, 'ㄳ': 45, 'ㄴ': 46, 'ㄵ': 47, 'ㄶ': 48, 'ㄷ': 49, 'ㄹ': 50, 'ㄺ': 51, 'ㄻ': 52, 'ㄼ': 53,
         'ㄽ': 54, 'ㄾ': 55, 'ㄿ': 56, 'ㅀ': 57, 'ㅁ': 58, 'ㅂ': 59, 'ㅄ': 60, 'ㅅ': 61, 'ㅆ': 62, 'ㅇ': 63, 'ㅈ': 64,
         'ㅊ': 65, 'ㅋ': 66, 'ㅌ': 67, 'ㅍ': 68, 'ㅎ': 69},
-
     'a': 70, 'b': 71, 'c': 72, 'd': 73, 'e': 74, 'f': 75, 'g': 76, 'h': 77, 'i': 78, 'j': 79, 'k': 80, 'l': 81, 'm': 82,
     'n': 83, 'o': 84, 'p': 85, 'q': 86, 'r': 87, 's': 88, 't': 89,
     'u': 90, 'v': 91, 'w': 92, 'x': 93, 'y': 94, 'z': 95,
     'A':  96, 'B':  97, 'C':  98, 'D':  99, 'E': 100, 'F': 101, 'G': 102, 'H': 103, 'I': 104, 'J': 105,
     'K': 106, 'L': 107, 'M': 108, 'N': 109, 'O': 110, 'P': 111, 'Q': 112, 'R': 113, 'S': 114, 'T': 115,
     'U': 116, 'V': 117, 'W': 118, 'X': 119, 'Y': 120, 'Z': 121,
-    '!': 122, '@': 123, '#': 124, '$': 125, '%': 126, '^': 127, '&': 128, '*': 129, '(': 130, ')': 131, '-': 132,
-    '_': 133, '=': 134, '+': 135, '[': 136, ']': 137, '{': 138, '}': 139, '\\': 140, '|': 141, ':': 140, ';': 141,
-    "'": 142, '"': 143, ',': 144, '.': 145, '<': 146, '>': 147, '/': 148, '?': 149, ' ': 150
+    '0': 122, '1': 123, '2': 124, '3': 125, '4': 126, '5': 127, '6': 128, '7': 129, '8': 130, '9': 131,
+    '!': 132, '@': 133, '#': 134, '$': 135, '%': 136, '^': 137, '&': 138, '*': 139, '(': 140, ')': 141, '-': 142,
+    '_': 143, '=': 144, '+': 145, '[': 146, ']': 147, '{': 148, '}': 149, '\\': 150, '|': 151, ':': 150, ';': 151,
+    "'": 152, '"': 153, ',': 154, '.': 155, '<': 156, '>': 157, '/': 158, '?': 159, ' ': 160
 }
 
 map_num_to_token = [
@@ -84,4 +84,32 @@ def token_to_num(token):
     return [map_token_to_num[HangulTokenType(i)][sub_token] for i, sub_token in enumerate(j2hcj(h2j(token)))] \
             if isHangul(token) else [map_token_to_num[token]]
 
+def tokenize_text(text):
+    """
+        The tokenize_text function returns the tokens from text, always start token is <sos>, end token is <eos>
+
+        Args:
+            text (str): The text will be tokenized
+
+        Returns:
+            list(str): The tokens from input text
+    """
+    return ['<sos>'] + list(text) + ['<eos>']
+
+def text_to_nums(text):
+    """
+        The text_to_nums function returns the number list converted from text.
+        The input text is tokenized, and after that tokens is converted to number list.
+
+        Args:
+            text (str): The text will be converted to numbers
+
+        Returns:
+            list(int): The numbers converted from tokens of text
+    """
+    nums = []
+    for token in tokenize_text(text):
+        nums.extend(token_to_num(token))
+
+    return nums
 
