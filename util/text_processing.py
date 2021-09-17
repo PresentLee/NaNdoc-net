@@ -1,6 +1,5 @@
 """
-Copyright : Team  Murphy-s-rule (Team Nandoc)
-Writer : 윤성국(Geoff Yoon)
+Writer : Team  Murphy-s-rule (Team Nandoc)
 
 This module contain functions or methods to process text for label in dataset or output of model.
 To generate HTML documentation for this module issue the command:
@@ -12,6 +11,7 @@ To generate HTML documentation for this module issue the command:
 from enum import Enum
 import re
 from jamo import h2j, j2hcj
+from unicode import join_jamos
 
 class HangulTokenType(Enum):
     """
@@ -51,16 +51,17 @@ map_token_to_num = {
 }
 
 map_num_to_token = [
-    '<sos>', '<pad>','<eos>',
-    'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ' 'ㅎ',
-    'ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ',
-    'ㅣ',
-    'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ',
-    'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ',
+    '<sos>', '<pad>', '<eos>',
+    'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ',
+    'ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ',
+    'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅄ', 'ㅅ',
+    'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ',
+
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
     'x', 'y', 'z',
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
     'X', 'Y', 'Z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[', ']', '{', '}', '\\', '|', ':', ';', "'",
     '"', ',', '.', '<', '>', '/', '?', ' '
 ]
@@ -87,6 +88,18 @@ def token_to_num(token):
     else:
         return [map_token_to_num[token]]
 
+def num_to_token(nums):
+    """
+        The nums_to_token returns the token mapped by input numbers
+
+        Args:
+            list(int): The numbers will be converted to token mapped
+
+        Returns:
+            token (str): The token converted from input numbers
+    """
+    return join_jamos([map_num_to_token[num] for num in nums]) if len(nums) > 1 else map_num_to_token[nums[0]]
+
 def tokenize_text(text):
     """
         The tokenize_text function returns the tokens from text, always start token is <sos>, end token is <eos>
@@ -99,10 +112,30 @@ def tokenize_text(text):
     """
     return ['<sos>'] + list(text) + ['<eos>']
 
+def split_nums(nums):
+    """
+        The split_nums function returns the list split numbers by each token
+
+        Args:
+            nums (list(int)): The number sequence will be splited by each token
+
+        Returns:
+            list(list(int)): The splited numbers from input full number sequence
+    """
+    nums_splited = []
+    for i, num in enumerate(nums):
+        if len(nums_splited) > 0 and ((num in range(22,43) and nums[i-1] in range(3,22)) or \
+           (len(nums_splited[-1]) == 2 and num in range(43,73) and nums[i-1] in range(22,43) and nums[i-2] in range(3,22))):
+            nums_splited[-1].append(num)
+            continue
+        nums_splited.append([num])
+
+    return nums_splited
+
 def text_to_nums(text):
     """
         The text_to_nums function returns the number list converted from text.
-        The input text is tokenized, and after that tokens is converted to number list.
+        The input text is tokenized by function, and after that tokens is converted to number list.
 
         Args:
             text (str): The text will be converted to numbers
@@ -115,4 +148,17 @@ def text_to_nums(text):
         nums.extend(token_to_num(token))
 
     return nums
+
+def nums_to_text(nums):
+    """
+        The nums_to_text function returns the text converted from number sequence.
+        The input number sequence is splited by function, and after that numbers splited is converted to token.
+
+        Args:
+            nums (list(int)): The number sequence will be converted to text
+
+        Returns:
+            str: The text converted from number sequence
+    """
+    return ''.join([num_to_token(num_splited) for num_splited in split_nums(nums)][1:-1])
 

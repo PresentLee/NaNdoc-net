@@ -135,6 +135,33 @@ test_sheet_text_to_nums = [
     },
 ]
 
+test_sheet_split_nums = [
+{
+        'args': [0, 14,42, 15,27, 165, 91, 77, 89, 127, 91, 77, 89, 8,40,51, 165, 14,42, 14,34,65, 21,23, 12,26, 165, 3,42, 3,29, 165,
+                10,26,46, 60, 14,28,43, 3,42, 8,40,51, 165, 9,22,46, 6,40,51, 14,26, 41, 10,30, 6,30, 8,30,43, 165, 21,22, 3,27,64, 12,40,60,
+                5,42, 6,22, 160, 2],
+        'return': [[0], [14,42], [15,27], [165], [91], [77], [89], [127], [91], [77], [89], [8,40,51], [165], [14,42], [14,34,65], [21,23], [12,26], [165], [3,42], [3,29], [165],
+                   [10,26,46], [60], [14,28,43], [3,42], [8,40,51], [165], [9,22,46], [6,40,51], [14,26], [41], [10,30], [6,30], [8,30,43], [165], [21,22], [3,27,64], [12,40,60],
+                   [5,42], [6,22], [160], [2]]
+    },
+    {
+        'args': [0, 10,28,65, 8,28,51, 165, 6,27, 14,42, 19,26, 8,22, 3,30, 165, 21,22, 9,28,46, 165, 14,22,71, 12,26, 165, 12,35,
+                 21,23,65, 21,22,46, 165, 19,23, 3,42,65, 165, 15,22,43, 14,26,60, 14,41, 165, 6,27, 14,42, 19,26, 8,40,51, 165,
+                 12,23,65, 3,22,43, 21,22,51, 165, 12,35, 165, 14,42,64, 15,42, 9,22,46, 159, 2],
+        'return': [[0], [10,28,65], [8,28,51], [165], [6,27], [14,42], [19,26], [8,22], [3,30], [165], [21,22], [9,28,46], [165], [14,22,71], [12,26], [165], [12,35],
+                   [21,23,65], [21,22,46], [165], [19,23], [3,42,65], [165], [15,22,43], [14,26,60], [14,41], [165], [6,27], [14,42], [19,26], [8,40,51], [165],
+                   [12,23,65], [3,22,43], [21,22,51], [165], [12,35], [165], [14,42,64], [15,42], [9,22,46], [159], [2]]
+    },
+    {
+        'args': [0, 92, 73, 90, 5,40,46, 165, 92, 73, 90, 79, 77, 92, 14,41, 165, 15,35,51, 136, 14,42,59, 9,22,51, 8,30, 165, 10,26,46, 14,28,43,
+                   21,22, 3,30, 15,22, 165, 21,22, 5,40,46, 165, 9,35,46, 15,22,65, 14,40,51, 165, 5,22, 19,22, 5,23,60, 5,42, 6,22,
+                   160, 2],
+        'return': [[0], [92], [73], [90], [5,40,46], [165], [92], [73], [90], [79], [77], [92], [14,41], [165], [15,35,51], [136], [14,42,59], [9,22,51], [8,30], [165], [10,26,46], [14,28,43],
+                   [21,22], [3,30], [15,22], [165], [21,22], [5,40,46], [165], [9,35,46], [15,22,65], [14,40,51], [165], [5,22], [19,22], [5,23,60], [5,42], [6,22],
+                   [160], [2]]
+    },
+]
+
 class TextProcessing(unittest.TestCase):
 
     def test_token_to_num(self):
@@ -142,6 +169,14 @@ class TextProcessing(unittest.TestCase):
             args = test_item['args']
             truth = test_item['return']
             ret = text_processing.token_to_num(args)
+            self.assertTrue(functools.reduce(lambda x, y: x and y, map(lambda p, q: p == q, truth, ret), True), f'test_sheet: {args}:{truth}, function return: {ret}')
+
+
+    def test_num_to_token(self):
+        for test_item in test_sheet_token_to_num:
+            args = test_item['return']
+            truth = test_item['args']
+            ret = text_processing.num_to_token(args)
             self.assertTrue(functools.reduce(lambda x, y: x and y, map(lambda p, q: p == q, truth, ret), True), f'test_sheet: {args}:{truth}, function return: {ret}')
 
     def test_isHangul(self):
@@ -158,12 +193,32 @@ class TextProcessing(unittest.TestCase):
             ret = text_processing.tokenize_text(args)
             self.assertTrue(functools.reduce(lambda x, y: x and y, map(lambda p, q: p == q, truth, ret), True), f'test_sheet: {args}:{truth}, function return: {ret}')
 
+    def test_split_nums(self):
+        for test_item in test_sheet_split_nums:
+            args = test_item['args']
+            truth = test_item['return']
+            ret = text_processing.split_nums(args)
+            self.assertTrue(functools.reduce(lambda x, y: x and y,
+                                             map(lambda truth_splited, ret_splited:
+                                                 functools.reduce(lambda x, y: x and y,
+                                                                  map(lambda p, q: p == q,
+                                                                      truth_splited, ret_splited), True),
+                                                 truth, ret), True),
+                            f'test_sheet: {args}:{truth}, function return: {ret}')
+
     def test_text_to_nums(self):
         for test_item in test_sheet_text_to_nums:
             args = test_item['args']
             truth = test_item['return']
             ret = text_processing.text_to_nums(args)
             self.assertTrue(functools.reduce(lambda x, y: x and y, map(lambda p, q: p == q, truth, ret), True), f'test_sheet: {args}:{truth}, function return: {ret}')
+
+    def test_nums_to_text(self):
+        for test_item in test_sheet_text_to_nums:
+            args = test_item['return']
+            truth = test_item['args']
+            ret = text_processing.nums_to_text(args)
+            self.assertEqual(truth, ret)
 
 if __name__ == '__main__':
     unittest.main()
