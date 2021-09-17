@@ -171,6 +171,7 @@ class TextProcessing(unittest.TestCase):
             ret = text_processing.token_to_num(args)
             self.assertTrue(functools.reduce(lambda x, y: x and y, map(lambda p, q: p == q, truth, ret), True), f'test_sheet: {args}:{truth}, function return: {ret}')
 
+
     def test_num_to_token(self):
         for test_item in test_sheet_token_to_num:
             args = test_item['return']
