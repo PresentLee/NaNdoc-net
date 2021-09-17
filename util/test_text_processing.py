@@ -197,9 +197,6 @@ class TextProcessing(unittest.TestCase):
             args = test_item['args']
             truth = test_item['return']
             ret = text_processing.split_nums(args)
-            print('-------------------')
-            print(truth)
-            print(ret)
             self.assertTrue(functools.reduce(lambda x, y: x and y,
                                              map(lambda truth_splited, ret_splited:
                                                  functools.reduce(lambda x, y: x and y,
@@ -214,6 +211,13 @@ class TextProcessing(unittest.TestCase):
             truth = test_item['return']
             ret = text_processing.text_to_nums(args)
             self.assertTrue(functools.reduce(lambda x, y: x and y, map(lambda p, q: p == q, truth, ret), True), f'test_sheet: {args}:{truth}, function return: {ret}')
+
+    def test_nums_to_text(self):
+        for test_item in test_sheet_text_to_nums:
+            args = test_item['return']
+            truth = test_item['args']
+            ret = text_processing.nums_to_text(args)
+            self.assertEqual(truth, ret)
 
 if __name__ == '__main__':
     unittest.main()

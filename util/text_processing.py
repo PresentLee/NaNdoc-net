@@ -134,7 +134,7 @@ def split_nums(nums):
 def text_to_nums(text):
     """
         The text_to_nums function returns the number list converted from text.
-        The input text is tokenized, and after that tokens is converted to number list.
+        The input text is tokenized by function, and after that tokens is converted to number list.
 
         Args:
             text (str): The text will be converted to numbers
@@ -147,3 +147,16 @@ def text_to_nums(text):
         nums.extend(token_to_num(token))
 
     return nums
+
+def nums_to_text(nums):
+    """
+        The nums_to_text function returns the text converted from number sequence.
+        The input number sequence is splited by function, and after that numbers splited is converted to token.
+
+        Args:
+            nums (list(int)): The number sequence will be converted to text
+
+        Returns:
+            str: The text converted from number sequence
+    """
+    return ''.join([num_to_token(num_splited) for num_splited in split_nums(nums)][1:-1])
